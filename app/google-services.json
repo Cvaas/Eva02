@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1060898932647",
+    "project_id": "aplicacion-d71aa",
+    "storage_bucket": "aplicacion-d71aa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060898932647:android:c0341b12f61d5a20c11882",
+        "android_client_info": {
+          "package_name": "com.brayan.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMSS7CQEFl4j4EOSzL4ltRd141I7wiwhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
