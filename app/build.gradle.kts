@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    // ⬇️ AGREGAR ESTA LÍNEA
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -35,7 +37,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
-        // ⭐ ESTO ES LO NUEVO - Suprime las advertencias de API experimental
+        // Suprime las advertencias de API experimental
         freeCompilerArgs += listOf(
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
         )
@@ -59,11 +61,21 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Navigation - CORREGIDO
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.5")
 
     // Icons Extended - NECESARIO para la app
     implementation("androidx.compose.material:material-icons-extended:1.7.0")
+
+    // ⬇️ DEPENDENCIAS DE FIREBASE (AGREGAR ESTAS)
+    // Firebase BOM
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+
+    // Firebase Authentication
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    // Google Sign In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // Testing
     testImplementation(libs.junit)
@@ -76,3 +88,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+// ⬇️ APLICAR EL PLUGIN AL FINAL DEL ARCHIVO
+apply(plugin = "com.google.gms.google-services")
