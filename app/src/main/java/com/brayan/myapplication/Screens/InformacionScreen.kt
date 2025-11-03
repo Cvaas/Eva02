@@ -103,11 +103,16 @@ fun InformacionScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Perfil",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Perfil",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = themeColors.topAppBarBackground,

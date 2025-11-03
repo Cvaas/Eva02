@@ -25,11 +25,16 @@ fun ConfiguracionScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Configuración",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Configuración",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
