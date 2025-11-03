@@ -11,6 +11,7 @@ sealed class Screen(val route: String) {
     object Principal : Screen("principal")
     object Historia : Screen("historia")
     object Informacion : Screen("informacion")
+    object Configuracion : Screen("configuracion")
 }
 
 @Composable
@@ -71,6 +72,24 @@ fun Inicial() {
                 },
                 onNavigateToHistory = {
                     navController.navigate(Screen.Historia.route)
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Screen.Configuracion.route)
+                },
+                onLogout = {
+                    // Limpiar todo el backstack y volver al login
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                themeColors = themeColors
+            )
+        }
+
+        composable(Screen.Configuracion.route) {
+            ConfiguracionScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 },
                 isDarkTheme = isDarkTheme,
                 onThemeChange = { isDarkTheme = it },

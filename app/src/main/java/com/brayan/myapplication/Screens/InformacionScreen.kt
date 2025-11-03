@@ -1,8 +1,11 @@
 package com.brayan.myapplication.ProbandoKotlin.Screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -10,22 +13,91 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.brayan.myapplication.ProbandoKotlin.Composables.BottomNavigationBar
 import com.brayan.myapplication.ProbandoKotlin.ThemeColors
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+
+private const val TAG = "InformacionScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformacionScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToHistory: () -> Unit,
-    isDarkTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onLogout: () -> Unit,
     themeColors: ThemeColors
 ) {
-    var userName by remember { mutableStateOf("Carlos Pérez") }
+    val context = LocalContext.current
+    val auth = remember { Firebase.auth }
+    val currentUser = auth.currentUser
+
+    // Obtener el nombre del usuario desde Firebase
+    val userName = currentUser?.displayName ?: currentUser?.email?.substringBefore("@") ?: "Usuario"
+    val userEmail = currentUser?.email ?: ""
+
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    // Diálogo de confirmación para cerrar sesión
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = {
+                Text(
+                    text = "Cerrar sesión",
+                    fontWeight = FontWeight.Bold,
+                    color = themeColors.textPrimary
+                )
+            },
+            text = {
+                Text(
+                    text = "¿Estás seguro de que deseas cerrar sesión?",
+                    color = themeColors.textSecondary
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        Log.d(TAG, "User logging out: ${currentUser?.email}")
+
+                        // Cerrar sesión de Firebase
+                        auth.signOut()
+
+                        Toast.makeText(
+                            context,
+                            "Sesión cerrada exitosamente",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        // Navegar a la pantalla de login
+                        onLogout()
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = themeColors.primary
+                    )
+                ) {
+                    Text("Cerrar sesión")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showLogoutDialog = false },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = themeColors.textSecondary
+                    )
+                ) {
+                    Text("Cancelar")
+                }
+            },
+            containerColor = themeColors.cardBackground
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -94,84 +166,138 @@ fun InformacionScreen(
                     color = themeColors.textPrimary
                 )
 
+                // Email del usuario
+                if (userEmail.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = userEmail,
+                        fontSize = 14.sp,
+                        color = themeColors.textSecondary
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Sección de Ajustes
+                // Opciones de la cuenta
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = horizontalPadding)
+                        .padding(horizontal = horizontalPadding),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "Ajustes",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = themeColors.textPrimary
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Selector de tema
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    // Botón de Configuración
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = themeColors.cardBackground
+                        ),
+                        elevation = CardDefaults.cardElevation(2.dp),
+                        onClick = onNavigateToSettings
                     ) {
-                        Text(
-                            text = "Tema",
-                            fontSize = 16.sp,
-                            color = themeColors.textPrimary
-                        )
-
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            ThemeOption(
-                                text = "Claro",
-                                isSelected = !isDarkTheme,
-                                onClick = { onThemeChange(false) },
-                                themeColors = themeColors
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(48.dp),
+                                    shape = CircleShape,
+                                    color = themeColors.iconBackground
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Settings,
+                                        contentDescription = "Configuración",
+                                        modifier = Modifier.padding(12.dp),
+                                        tint = themeColors.iconTint
+                                    )
+                                }
+
+                                Column {
+                                    Text(
+                                        text = "Configuración",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = themeColors.textPrimary
+                                    )
+                                    Text(
+                                        text = "Apariencia y preferencias",
+                                        fontSize = 14.sp,
+                                        color = themeColors.textSecondary
+                                    )
+                                }
+                            }
+
+                            Icon(
+                                imageVector = Icons.Default.ChevronRight,
+                                contentDescription = "Ir",
+                                tint = themeColors.textSecondary
                             )
-                            ThemeOption(
-                                text = "Oscuro",
-                                isSelected = isDarkTheme,
-                                onClick = { onThemeChange(true) },
-                                themeColors = themeColors
+                        }
+                    }
+
+                    // Botón de Cerrar Sesión
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = themeColors.cardBackground
+                        ),
+                        elevation = CardDefaults.cardElevation(2.dp),
+                        onClick = { showLogoutDialog = true }
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(48.dp),
+                                    shape = CircleShape,
+                                    color = Color(0xFFFFEBEE)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ExitToApp,
+                                        contentDescription = "Cerrar sesión",
+                                        modifier = Modifier.padding(12.dp),
+                                        tint = Color(0xFFD32F2F)
+                                    )
+                                }
+
+                                Column {
+                                    Text(
+                                        text = "Cerrar sesión",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = Color(0xFFD32F2F)
+                                    )
+                                    Text(
+                                        text = "Salir de tu cuenta",
+                                        fontSize = 14.sp,
+                                        color = themeColors.textSecondary
+                                    )
+                                }
+                            }
+
+                            Icon(
+                                imageVector = Icons.Default.ChevronRight,
+                                contentDescription = "Ir",
+                                tint = themeColors.textSecondary
                             )
                         }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ThemeOption(
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    themeColors: ThemeColors
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        RadioButton(
-            selected = isSelected,
-            onClick = onClick,
-            colors = RadioButtonDefaults.colors(
-                selectedColor = themeColors.iconTint,
-                unselectedColor = themeColors.divider
-            )
-        )
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            color = themeColors.textPrimary
-        )
     }
 }

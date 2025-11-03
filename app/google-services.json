@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "666425396145-4ql9lh13iidf2iehp2v5m6s3j1ct2hjr.apps.googleusercontent.com",
+          "client_id": "666425396145-8e88mphgks2bh9jkvqug7h90eaemaf13.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.brayan.myapplication",
-            "certificate_hash": "bb0dac74d321e14307719b6290afa1666e445d75"
+            "certificate_hash": "8560094ce4ee3ba6d8ed05c45e4c6a98bad77653"
+          }
+        },
+        {
+          "client_id": "666425396145-lodiodfp4mljreciq2ab1ujtoa692d1e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brayan.myapplication",
+            "certificate_hash": "71b0047a49205532257b594f5338b1c9379480b8"
+          }
+        },
+        {
+          "client_id": "666425396145-vhrtiqvcn5bm4sf0kv75f6ngfec7n7j1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brayan.myapplication",
+            "certificate_hash": "64d40554ea7530baa6e0cd438563706f0e836308"
           }
         },
         {
